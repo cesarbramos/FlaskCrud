@@ -1,0 +1,113 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+<div class="col-md-4">
+	{% with messages = get_flashed_messages() %}
+	{% if messages %}
+	{% for message in messages %}
+		<div class="alert alert-dismissible alert-info" style="transition: .3s;" role='alert' >
+			<strong>{{ message }}</strong>
+	        <button type="button" class="close" data-dismiss="alert">&times;</button>
+	       </div>
+	{% endfor %}
+	{% endif %}
+	{% endwith %}
+	<div class="card card-body">
+		<form action="/add" method="POST">
+			<h5><span class="badge badge-dark btn-block">TASKS ( {{ count }} )</span></h5>
+			<div class="form-group">
+				<input type="text" class="form-control" name="title" placeholder="TITLE" id="title">
+			</div>
+			<div class="form-group">
+				<select id="priority" name="priority" class="form-control" required>
+					<option >-- PRIORITY --</option>
+					<option value="high">HIGH</option>
+					<option value="medium">MEDIUM</option>
+					<option value="low">LOW</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<textarea class="form-control" name="description" placeholder="DESCRIPTION" id="description"></textarea>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-block btn-danger" type="submit" >OK</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div class="col-md-8">
+	<div class="form-row">
+		{% for contact in contacts %}
+			<div class="col-md-4">
+				<div class="card mb-2 text-center">
+					<div class="card-header bg-dark text-light">
+						<strong> <span class="badge badge-light">{{ contact.0 }}</span>  {{ contact.1 }}</strong>
+					</div>
+					<div class="card-body">
+						{% if contact.3 == 'high' %}
+							<span class="badge badge-pill badge-danger btn-block">{{ contact.3 }}</span>
+						{% elif contact.3 == 'medium' %}
+							<span class="badge badge-pill badge-warning btn-block">{{ contact.3 }}</span>
+						{% elif contact.3 == 'low' %}
+							<span class="badge badge-pill badge-success btn-block">{{ contact.3 }}</span>
+						{% else %}
+							<span class="badge badge-pill badge-dark btn-block">{{ contact.3 }}</span>
+						{% endif %}
+						
+						{{ contact.2 }}
+
+					</div>
+					<div class="card-footer">
+						<button  class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal{{ contact.0 }}">
+					        edit
+					    </button>
+
+    						<!-- Modal -->
+						    <div class="modal fade" id="modal{{ contact.0 }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						        <div class="modal-dialog" role="document">
+						            <div class="modal-content">
+						                <div class="modal-header bg-dark">
+						                    <h5 class="modal-title text-light" id="exampleModalLabel">ANUNCIO
+												<span class="badge badge-light">{{ contact.0 }}</span>
+						                     </h5>
+						                    <button type="button" class="close text-light" id="botonde" data-dismiss="modal" aria-label="Close">
+						                        <span aria-hidden="true">&times;</span>
+						                    </button>
+						                </div>
+						                <div class="modal-body p-4">
+						                   <form action="/edit/{{ contact.0 }}" method="POST">
+						                   		
+						                   		<div class="form-group">
+													<input type="text" class="form-control" name="updateTitle" placeholder="TITLE" id="updateTitle" value="{{ contact.1 }}">
+												</div>
+												<div class="form-group">
+													<select id="updatePriority" name="updatePriority" class="form-control" required>
+														<option value="high">HIGH</option>
+														<option value="medium">MEDIUM</option>
+														<option value="low">LOW</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<textarea class="form-control" name="updateDescription" placeholder="DESCRIPTION" id="updateDescription">{{ contact.2 }}</textarea>
+												</div>
+												<div class="form-group">
+													<button class="btn btn-block btn-primary" type="submit" >EDITAR</button>
+												</div>
+						             
+						                   </form>
+						                </div>
+						            </div>
+						        </div>
+						    </div>
+
+						<a class="btn btn-sm btn-danger" href="/delete/{{ contact.0 }}">delete</a>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock %}
